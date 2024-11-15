@@ -1,0 +1,51 @@
+name: Build, Test, and SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - main  # Gatilho para o ramo principal
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  build-and-analyze:
+    name: Build, Test, and SonarQube Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Faz o checkout completo do histórico para que o SonarQube possa analisar corretamente
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'zulu'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven
+
+      - name: Build with Maven and Run Tests
+        run: mvn clean install -DskipTests=false  # Executa o build e os testes
+
+      - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Necessário para integração com o GitHub
+        run: mvn sonar:sonar \
+          -Dsonar.projectKey=wm2224 \
+          -Dsonar.projectName=spring-rest-data-security \
+          -Dsonar.projectVersion=1.0 \
+          -Dsonar.sources=. \
+          -Dsonar.java.binaries=./target \
+          -Dsonar.sourceEncoding=UTF-8 \
+          -Dsonar.host.url=https://sonarcloud.io
