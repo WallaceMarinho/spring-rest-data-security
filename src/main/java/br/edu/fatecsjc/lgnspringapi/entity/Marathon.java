@@ -1,16 +1,4 @@
-// Marathon.java
 package br.edu.fatecsjc.lgnspringapi.entity;
-
-import jakarta.persistence.*;
-import lombok.*;
-import java.util.List;
-
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Entity
 @Table(name = "marathon")
 public class Marathon {
@@ -20,9 +8,11 @@ public class Marathon {
     private Long id;
 
     private String identifier;
+
     private Double weight;
+
     private Integer score;
 
-    @ManyToMany(mappedBy = "marathon")
+    @ManyToMany(mappedBy = "marathons")
     private List<Member> members;
 }

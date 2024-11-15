@@ -9,9 +9,8 @@ services:
       MARIADB_ROOT_PASSWORD: root
       MARIADB_DATABASE: sample
       MARIADB_ROOT_HOST: '%'
-    build: .  
     ports:
-      - 3307:3306
+      - 3306:3306
     volumes:
       - mariadb_volume:/var/lib/mysql
     networks:
@@ -22,7 +21,7 @@ services:
     build:
       context: . 
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://maria-db:3307/sample
+      SPRING_DATASOURCE_URL: jdbc:mariadb://maria-db:3306/sample
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     ports:
